@@ -209,6 +209,19 @@ BREAKING CHANGE: 設定ファイルのフォーマットが変更されました
 - 不適切なコミットメッセージは誤ったバージョニングの原因となります
 - 詳細は [Conventional Commits](https://www.conventionalcommits.org/) を参照
 
+#### コミットメッセージの強制
+
+このプロジェクトでは **gitlint + pre-commit** でコミットメッセージ形式を強制しています。
+
+```bash
+# 初回セットアップ（一度だけ実行）
+poe setup-hooks
+
+# これで不正なコミットメッセージは自動的に拒否されます
+git commit -m "Added feature"  # ❌ エラー
+git commit -m "feat: add feature"  # ✅ 成功
+```
+
 ---
 
 ## 📦 プロジェクト構成

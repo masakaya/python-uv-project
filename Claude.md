@@ -103,6 +103,48 @@ BREAKING CHANGE: Configuration format has changed
 
 **Always use Conventional Commits format. Incorrect format will result in improper versioning.**
 
+### Enforcement with Git Hooks
+
+This project uses **gitlint** with **pre-commit** to enforce Conventional Commits format.
+
+#### Setup (First Time Only)
+
+```bash
+# Install git hooks
+poe setup-hooks
+
+# Or manually
+uv run pre-commit install --hook-type commit-msg
+```
+
+#### How It Works
+
+When you commit, gitlint automatically validates your commit message:
+
+```bash
+# ✅ Valid commit - will succeed
+git commit -m "feat: add user authentication"
+
+# ❌ Invalid commit - will be rejected
+git commit -m "Added new feature"
+# Error: Commit message does not follow Conventional Commits format
+```
+
+#### Validation Commands
+
+```bash
+# Validate last commit message
+poe validate-commit
+
+# Uninstall hooks (if needed)
+poe uninstall-hooks
+```
+
+#### Configuration
+
+- `.pre-commit-config.yaml` - Pre-commit hook configuration
+- `.gitlint` - Gitlint rules and format enforcement
+
 ## Package Management
 
 This project uses **uv** for package management. **DO NOT use pip**.
