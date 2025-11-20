@@ -1,6 +1,13 @@
 # Python Project Template with uv
 
+[![Tests](https://github.com/masakaya/python-uv-project/actions/workflows/test.yml/badge.svg)](https://github.com/masakaya/python-uv-project/actions/workflows/test.yml)
+[![Ruff](https://github.com/masakaya/python-uv-project/actions/workflows/ruff.yml/badge.svg)](https://github.com/masakaya/python-uv-project/actions/workflows/ruff.yml)
+[![mypy](https://github.com/masakaya/python-uv-project/actions/workflows/mypy.yml/badge.svg)](https://github.com/masakaya/python-uv-project/actions/workflows/mypy.yml)
+[![Python](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
+
 Modern Python プロジェクトテンプレート - 高速パッケージマネージャ `uv` とコード品質ツールの統合
+
+> **📊 カバレッジレポート**: 各 PR に自動的にカバレッジレポートがコメントされます
 
 ## 📋 概要
 
