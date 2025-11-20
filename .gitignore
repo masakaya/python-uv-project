@@ -309,3 +309,25 @@ fabric.properties
 *_LOCAL_*.txt
 *_REMOTE_*.txt
 
+
+# Ruff
+.ruff_cache/
+RUFF_REVIEW.md
+ruff_report.json
+
+# Test files (開発時のみ使用)
+test_ruff_behavior.py
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.coverage.*
+coverage.xml
+*.cover
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+MYPY_REVIEW.md
