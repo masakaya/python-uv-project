@@ -94,6 +94,7 @@ if __name__ == "__main__":
 
     # 新しく追加: さらに問題のあるコード
     import json  # 未使用のインポート
+
     unused_var = 100  # 未使用変数
     if result == True:  # 不要な比較
         pass
