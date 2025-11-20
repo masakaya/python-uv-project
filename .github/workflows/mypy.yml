@@ -25,6 +25,11 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-groups
 
+      - name: Install reviewdog
+        uses: reviewdog/action-setup@v1
+        with:
+          reviewdog_version: latest
+
       - name: Run mypy with reviewdog
         continue-on-error: true
         run: |
