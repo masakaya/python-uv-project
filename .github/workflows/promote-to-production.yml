@@ -17,6 +17,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # 全履歴を取得（ブランチ比較に必要）
+          ref: staging
 
       - name: Check if production branch exists
         id: check-production
@@ -33,11 +34,57 @@ jobs:
           git checkout -b production
           git push origin production
 
+      - name: Create merge branch with conflict resolution
+        if: steps.check-production.outputs.exists == 'true'
+        run: |
+          # Git設定
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # マージ用ブランチを作成
+          BRANCH_NAME="auto-promote-staging-to-production-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b "$BRANCH_NAME" origin/production
+
+          # staging をマージ試行
+          if ! git merge --no-commit --no-ff origin/staging; then
+            echo "Merge conflicts detected. Resolving automatically..."
+
+            # manifest.json のコンフリクトを自動解決（staging側のバージョンを採用）
+            if [ -f .github/.release-please-manifest.json ]; then
+              git checkout --theirs .github/.release-please-manifest.json
+              git add .github/.release-please-manifest.json
+              echo "Resolved .github/.release-please-manifest.json (using staging version)"
+            fi
+
+            # 他のコンフリクトがないか確認
+            if git diff --name-only --diff-filter=U | grep -v ".github/.release-please-manifest.json"; then
+              echo "ERROR: Unexpected conflicts found beyond manifest.json"
+              git merge --abort
+              exit 1
+            fi
+
+            # マージコミット作成
+            git commit -m "chore: merge staging to production with auto-resolved conflicts
+
+Auto-resolved conflicts:
+- .github/.release-please-manifest.json (used staging version)"
+          else
+            # コンフリクトなしの場合も明示的にコミット
+            git commit -m "chore: merge staging to production"
+          fi
+
+          # ブランチをpush
+          git push origin "$BRANCH_NAME"
+
+          # 次のステップで使用するためにブランチ名を保存
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+        id: merge
+
       - name: Create Pull Request to production
         if: steps.check-production.outputs.exists == 'true'
         uses: repo-sync/pull-request@v2
         with:
-          source_branch: staging
+          source_branch: ${{ steps.merge.outputs.branch_name }}
           destination_branch: production
           pr_title: "chore: Promote staging to production"
           pr_body: |
@@ -47,6 +94,9 @@ jobs:
 
             ### Changes
             This includes all commits merged to staging since the last promotion.
+
+            ### Auto-resolved Conflicts
+            - `.github/.release-please-manifest.json` - Always uses the staging version
 
             ### Checklist
             - [ ] Review changes

@@ -17,6 +17,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # 全履歴を取得（ブランチ比較に必要）
+          ref: main
 
       - name: Check if staging branch exists
         id: check-staging
@@ -33,11 +34,57 @@ jobs:
           git checkout -b staging
           git push origin staging
 
+      - name: Create merge branch with conflict resolution
+        if: steps.check-staging.outputs.exists == 'true'
+        run: |
+          # Git設定
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # マージ用ブランチを作成
+          BRANCH_NAME="auto-promote-main-to-staging-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b "$BRANCH_NAME" origin/staging
+
+          # main をマージ試行
+          if ! git merge --no-commit --no-ff origin/main; then
+            echo "Merge conflicts detected. Resolving automatically..."
+
+            # manifest.json のコンフリクトを自動解決（main側のバージョンを採用）
+            if [ -f .github/.release-please-manifest.json ]; then
+              git checkout --theirs .github/.release-please-manifest.json
+              git add .github/.release-please-manifest.json
+              echo "Resolved .github/.release-please-manifest.json (using main version)"
+            fi
+
+            # 他のコンフリクトがないか確認
+            if git diff --name-only --diff-filter=U | grep -v ".github/.release-please-manifest.json"; then
+              echo "ERROR: Unexpected conflicts found beyond manifest.json"
+              git merge --abort
+              exit 1
+            fi
+
+            # マージコミット作成
+            git commit -m "chore: merge main to staging with auto-resolved conflicts
+
+Auto-resolved conflicts:
+- .github/.release-please-manifest.json (used main version)"
+          else
+            # コンフリクトなしの場合も明示的にコミット
+            git commit -m "chore: merge main to staging"
+          fi
+
+          # ブランチをpush
+          git push origin "$BRANCH_NAME"
+
+          # 次のステップで使用するためにブランチ名を保存
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+        id: merge
+
       - name: Create Pull Request to staging
         if: steps.check-staging.outputs.exists == 'true'
         uses: repo-sync/pull-request@v2
         with:
-          source_branch: main
+          source_branch: ${{ steps.merge.outputs.branch_name }}
           destination_branch: staging
           pr_title: "chore: Promote main to staging"
           pr_body: |
@@ -47,6 +94,9 @@ jobs:
 
             ### Changes
             This includes all commits merged to main since the last promotion.
+
+            ### Auto-resolved Conflicts
+            - `.github/.release-please-manifest.json` - Always uses the main version
 
             ### Checklist
             - [ ] Review changes
