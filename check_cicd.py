@@ -10,19 +10,21 @@ CI/CD チェック用のテストファイル
 # Ruff linting issues
 import os  # 未使用のインポート
 import sys  # 未使用のインポート
-from typing import List,Dict,Optional  # フォーマット問題: カンマの後にスペースなし
+from typing import List, Dict, Optional  # フォーマット問題: カンマの後にスペースなし
 
 
-def bad_function_with_very_long_name_that_exceeds_the_line_length_limit_and_should_be_flagged_by_ruff(param1, param2, param3):
+def bad_function_with_very_long_name_that_exceeds_the_line_length_limit_and_should_be_flagged_by_ruff(
+    param1, param2, param3
+):
     """長すぎる関数名と行"""
     unused_variable = 10  # 未使用変数
-    x=1+2  # フォーマット問題: 演算子の前後にスペースなし
+    x = 1 + 2  # フォーマット問題: 演算子の前後にスペースなし
 
     # 不要な比較
     if x == True:
         print("bad")
 
-    return param1+param2+param3  # フォーマット問題
+    return param1 + param2 + param3  # フォーマット問題
 
 
 # mypy type errors: 型アノテーションなし
@@ -47,16 +49,18 @@ def wrong_argument_type(numbers: List[int]) -> int:
 
 
 # 複数の問題を持つクラス
-class   BadClass:  # フォーマット問題: クラス名の前に余分なスペース
-    def __init__(self,name,age):  # mypy: 型アノテーションなし、フォーマット: スペースなし
-        self.name=name  # フォーマット問題
-        self.age=age
+class BadClass:  # フォーマット問題: クラス名の前に余分なスペース
+    def __init__(
+        self, name, age
+    ):  # mypy: 型アノテーションなし、フォーマット: スペースなし
+        self.name = name  # フォーマット問題
+        self.age = age
         self.unused_attr = "not used"  # 未使用属性
 
-    def bad_method(self,x):  # mypy: 型アノテーションなし
-        if x==None:  # フォーマット問題、比較問題
+    def bad_method(self, x):  # mypy: 型アノテーションなし
+        if x == None:  # フォーマット問題、比較問題
             return 0
-        return x*2
+        return x * 2
 
 
 # さらなる型エラー
@@ -67,7 +71,14 @@ def mixed_types(value):  # mypy: 型アノテーションなし
 
 
 # 長すぎる行
-very_long_dictionary = {"key1": "value1", "key2": "value2", "key3": "value3", "key4": "value4", "key5": "value5", "key6": "value6"}
+very_long_dictionary = {
+    "key1": "value1",
+    "key2": "value2",
+    "key3": "value3",
+    "key4": "value4",
+    "key5": "value5",
+    "key6": "value6",
+}
 
 
 if __name__ == "__main__":
@@ -76,5 +87,7 @@ if __name__ == "__main__":
         print("This always runs")
 
     # 型エラーのある呼び出し
-    result = wrong_argument_type(["a", "b", "c"])  # List[str]を渡しているがList[int]が期待される
+    result = wrong_argument_type(
+        ["a", "b", "c"]
+    )  # List[str]を渡しているがList[int]が期待される
     print(result)
