@@ -16,4 +16,4 @@ jobs:
       - uses: googleapis/release-please-action@v4
         with:
           # v4 では設定ファイル (release-please-config.json) を使用
-          # token は自動的に GITHUB_TOKEN を使用
+          token: ${{ secrets.GITHUB_TOKEN }}
