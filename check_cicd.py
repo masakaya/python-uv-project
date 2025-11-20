@@ -91,3 +91,9 @@ if __name__ == "__main__":
         ["a", "b", "c"]
     )  # List[str]を渡しているがList[int]が期待される
     print(result)
+
+    # 新しく追加: さらに問題のあるコード
+    import json  # 未使用のインポート
+    unused_var = 100  # 未使用変数
+    if result == True:  # 不要な比較
+        pass
