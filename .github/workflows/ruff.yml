@@ -27,22 +27,14 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-groups
 
-      - name: Install reviewdog
-        uses: reviewdog/action-setup@v1
-        with:
-          reviewdog_version: latest
-
       - name: Run Ruff with reviewdog
-        continue-on-error: true
-        run: |
-          uv run ruff check . --output-format=json | \
-          reviewdog -f=ruff \
-            -reporter=github-pr-review \
-            -filter-mode=nofilter \
-            -fail-on-error=false \
-            -level=warning || true
-        env:
-          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: benny123tw/action-ruff@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          level: warning
+          filter_mode: added
+          ruff_flags: --config=ruff.toml
 
       - name: Run Ruff format and auto-commit
         if: github.event_name == 'pull_request'
