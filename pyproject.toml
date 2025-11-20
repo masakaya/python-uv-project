@@ -8,8 +8,10 @@ dependencies = []
 
 [dependency-groups]
 dev = [
+    "gitlint>=0.19.1",
     "mypy>=1.18.2",
     "poethepoet>=0.37.0",
+    "pre-commit>=4.4.0",
     "pytest>=9.0.1",
     "pytest-cov>=7.0.0",
     "ruff>=0.14.5",
@@ -118,6 +120,21 @@ cmd = "uv sync --all-groups"
 [tool.poe.tasks.update]
 help = "Update dependencies"
 cmd = "uv lock --upgrade"
+
+# ----------------------------------------
+# Git hooks
+# ----------------------------------------
+[tool.poe.tasks.setup-hooks]
+help = "Install pre-commit git hooks"
+cmd = "pre-commit install --hook-type commit-msg"
+
+[tool.poe.tasks.uninstall-hooks]
+help = "Uninstall pre-commit git hooks"
+cmd = "pre-commit uninstall --hook-type commit-msg"
+
+[tool.poe.tasks.validate-commit]
+help = "Validate last commit message"
+shell = "gitlint --msg-filename <(git log -1 --pretty=%B)"
 
 # ----------------------------------------
 # テスト
