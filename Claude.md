@@ -20,6 +20,43 @@
 
 **Always work through Pull Requests. Never push directly to protected branches.**
 
+### ⚠️ Important: GitHub Actions Auto-Commits
+
+**GitHub Actions may create commits automatically (e.g., Ruff auto-formatting).**
+
+This can cause conflicts if you continue working locally while the action is running.
+
+#### To avoid conflicts:
+
+```bash
+# Before continuing work, rebase with the latest remote branch
+git fetch origin
+git rebase origin/<your-branch-name>
+
+# If conflicts occur during rebase, resolve them and continue
+git rebase --continue
+```
+
+#### Example workflow:
+
+```bash
+# 1. Push your changes
+git push origin feature/my-feature
+
+# 2. GitHub Actions runs and may add auto-format commits
+
+# 3. Before making more changes, rebase first
+git fetch origin
+git rebase origin/feature/my-feature
+
+# 4. Now safe to continue working
+git add .
+git commit -m "feat: continue work"
+git push origin feature/my-feature
+```
+
+**Always rebase before continuing work on a branch with an open PR.**
+
 ## Code Quality Standards
 
 This project adheres to strict code quality standards:
