@@ -15,6 +15,7 @@ Modern Python プロジェクトテンプレート - 高速パッケージマネ
 - ✅ **タスクランナー**: Poe the Poet による統一されたコマンド
 - ✅ **GitHub Actions 統合**: reviewdog による自動コードレビュー
 - ✅ **自動フォーマット**: PR時に自動的にコード整形＋コミット
+- ✅ **依存関係自動更新**: Renovate による定期的な依存関係更新
 
 ---
 
@@ -46,9 +47,10 @@ uv sync --all-groups
 
 | ツール | 用途 | ドキュメント |
 |-------|------|-------------|
-| **Ruff** | Linting & Formatting | [docs/RUFF_INTEGRATION.md](docs/RUFF_INTEGRATION.md) |
+| **Ruff** | Linting & Formatting | [docs/RUFF.md](docs/RUFF.md) |
 | **mypy** | 静的型チェック | [docs/MYPY.md](docs/MYPY.md) |
 | **pytest** | テスティング | [docs/TESTING.md](docs/TESTING.md) |
+| **Renovate** | 依存関係自動更新 | [docs/RENOVATE.md](docs/RENOVATE.md) |
 
 ### タスク管理
 
@@ -101,7 +103,7 @@ poe check        # 全チェック実行
 
 ## 🤖 GitHub Actions
 
-このテンプレートには3つの自動化ワークフローが含まれています：
+このテンプレートには4つの自動化ワークフローが含まれています：
 
 ### 1. Ruff ワークフロー (`.github/workflows/ruff.yml`)
 - **自動実行**: push/PR時
@@ -124,6 +126,14 @@ poe check        # 全チェック実行
   - テスト実行
   - カバレッジレポート
   - Codecov連携
+
+### 4. Renovate ワークフロー (`.github/workflows/renovate.yml`)
+- **自動実行**: 毎週土曜日 3:00 JST
+- **手動実行**: 可能
+- **処理内容**:
+  - 依存関係の更新チェック
+  - 更新PRの自動作成
+  - マイナー・パッチ更新の自動マージ
 
 ---
 
