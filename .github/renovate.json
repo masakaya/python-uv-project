@@ -6,7 +6,7 @@
   "packageRules": [
     {
       "description": "Python バージョンは更新しない",
-      "matchManagers": ["pip_requirements", "pip_setup", "pipenv", "poetry", "pep621"],
+      "matchManagers": ["pep621"],
       "matchPackageNames": ["python"],
       "enabled": false
     },
