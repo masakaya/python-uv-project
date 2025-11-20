@@ -21,6 +21,8 @@ Modern Python プロジェクトテンプレート - 高速パッケージマネ
 - ✅ **静的型チェック**: mypy による型安全性の保証
 - ✅ **自動テスト**: pytest + カバレッジレポート
 - ✅ **タスクランナー**: Poe the Poet による統一されたコマンド
+- ✅ **コミットメッセージ強制**: gitlint による Conventional Commits 検証
+- ✅ **自動バージョニング**: release-please による自動リリース管理
 - ✅ **GitHub Actions 統合**: reviewdog による自動コードレビュー
 - ✅ **自動フォーマット**: PR時に自動的にコード整形＋コミット
 - ✅ **依存関係自動更新**: Renovate による定期的な依存関係更新
@@ -44,8 +46,94 @@ cd python-uv-project
 # 依存関係をインストール
 uv sync --all-groups
 
+# Git hooks をインストール（コミットメッセージ検証用）
+poe setup-hooks
+
 # 開発準備完了！
 ```
+
+---
+
+## 📝 コミットルール（必読）
+
+**このプロジェクトは Conventional Commits を使用した自動バージョニングを採用しています。**
+
+### 必須フォーマット
+
+すべてのコミットメッセージは以下の形式に従う必要があります：
+
+```
+<type>: <description>
+
+[optional body]
+
+[optional footer]
+```
+
+### タイプと影響
+
+| Type | 説明 | 例 | バージョン影響 |
+|------|------|-----|---------------|
+| `feat` | 新機能追加 | `feat: add user login` | 0.1.0 → **0.2.0** |
+| `fix` | バグ修正 | `fix: resolve memory leak` | 0.1.0 → **0.1.1** |
+| `feat!` | 破壊的変更 | `feat!: redesign API` | 0.1.0 → **1.0.0** |
+| `chore` | メンテナンス | `chore: update dependencies` | なし |
+| `docs` | ドキュメント | `docs: update README` | なし |
+| `refactor` | リファクタリング | `refactor: simplify logic` | なし |
+| `test` | テスト | `test: add unit tests` | なし |
+| `ci` | CI/CD変更 | `ci: add workflow` | なし |
+
+### 自動検証
+
+**gitlint** がコミット時に自動的にメッセージを検証します：
+
+```bash
+# ✅ 成功 - 正しいフォーマット
+git commit -m "feat: add authentication"
+git commit -m "fix: resolve login bug"
+git commit -m "docs: update setup guide"
+
+# ❌ 失敗 - 不正なフォーマット
+git commit -m "Added feature"        # Type がない
+git commit -m "add: new feature"     # 無効な type
+git commit -m "feat:add feature"     # コロン後のスペースがない
+git commit -m "feat: a"              # description が短すぎる（最低10文字）
+```
+
+### 破壊的変更の書き方
+
+```bash
+# 方法1: ! を付ける
+git commit -m "feat!: remove old API
+
+BREAKING CHANGE: The legacy API has been removed"
+
+# 方法2: BREAKING CHANGE フッター
+git commit -m "refactor: change config format
+
+BREAKING CHANGE: Configuration file format changed from JSON to YAML"
+```
+
+### なぜ重要か
+
+- **自動バージョニング**: production へのマージ時、コミット履歴から自動的にバージョンを決定
+- **CHANGELOG 生成**: コミットメッセージから自動的に CHANGELOG.md を生成
+- **リリース管理**: 適切なバージョンで GitHub Release を作成
+
+### トラブルシューティング
+
+```bash
+# フックが動作しない場合
+poe setup-hooks
+
+# 最後のコミットメッセージを検証
+poe validate-commit
+
+# フックを一時的に無効化（非推奨）
+git commit --no-verify -m "message"
+```
+
+詳細: [Conventional Commits 公式サイト](https://www.conventionalcommits.org/)
 
 ---
 
@@ -173,6 +261,8 @@ git push
    - reviewdog が該当行にコメント
    - テストが自動実行
 3. **レビュー**: 整形済みのコードをレビュー
+
+**注意**: コミットメッセージは [📝 コミットルール](#-コミットルール必読) に従う必要があります。
 
 ---
 

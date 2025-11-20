@@ -1,5 +1,150 @@
 # Project Rules for Claude Code
 
+## Branch Protection Policy
+
+**IMPORTANT: Direct push to the following branches is PROHIBITED:**
+
+- `main` - Main branch (stable code)
+- `staging` - Staging environment branch
+- `production` - Production environment branch
+
+### Workflow
+
+1. Create a feature branch from `main`
+2. Make changes and commit
+3. Create a Pull Request to `main`
+4. After review and merge to `main`, auto-promotion PRs will be created:
+   - `main` → `staging` (automatic PR)
+   - `staging` → `production` (automatic PR after staging merge)
+5. Production merge triggers automatic release creation (version tag + CHANGELOG)
+
+**Always work through Pull Requests. Never push directly to protected branches.**
+
+## Code Quality Standards
+
+This project adheres to strict code quality standards:
+
+### Ruff (Linting & Formatting)
+
+- **All code must pass Ruff checks** before merging
+- Ruff automatically formats code on PR creation
+- Configuration: `ruff.toml`
+- Run locally: `poe lint` or `poe format`
+
+### mypy (Type Checking)
+
+- **All code must pass mypy type checks** before merging
+- Type annotations are required for all functions
+- Configuration: `pyproject.toml` (`[tool.mypy]` section)
+- Run locally: `poe typecheck`
+
+### Enforcement
+
+- GitHub Actions automatically runs Ruff and mypy on all PRs
+- reviewdog posts inline comments for any violations
+- PRs cannot be merged until all checks pass
+
+**When writing code, ensure it complies with both Ruff and mypy standards.**
+
+## Commit Message Convention
+
+**IMPORTANT: This project uses Conventional Commits for automatic versioning and CHANGELOG generation.**
+
+All commit messages MUST follow the Conventional Commits format:
+
+```
+<type>: <description>
+
+[optional body]
+
+[optional footer]
+```
+
+### Required Types
+
+- **feat**: A new feature (triggers MINOR version bump: 0.1.0 → 0.2.0)
+- **fix**: A bug fix (triggers PATCH version bump: 0.1.0 → 0.1.1)
+- **chore**: Maintenance tasks (no version bump)
+- **docs**: Documentation changes (no version bump)
+- **refactor**: Code refactoring (no version bump)
+- **test**: Adding or updating tests (no version bump)
+- **ci**: CI/CD changes (no version bump)
+
+### Breaking Changes
+
+For breaking changes (triggers MAJOR version bump: 0.1.0 → 1.0.0):
+
+```
+feat!: remove deprecated API
+
+BREAKING CHANGE: The old API has been removed
+```
+
+### Examples
+
+```bash
+# Feature (0.1.0 → 0.2.0)
+feat: add user authentication
+
+# Bug fix (0.1.0 → 0.1.1)
+fix: resolve memory leak in parser
+
+# Breaking change (0.1.0 → 1.0.0)
+feat!: redesign configuration API
+
+BREAKING CHANGE: Configuration format has changed
+```
+
+### Why This Matters
+
+- **Automatic versioning**: release-please analyzes commits to determine version
+- **CHANGELOG generation**: Commits are automatically organized into CHANGELOG
+- **Production releases**: Only properly formatted commits trigger correct versioning
+
+**Always use Conventional Commits format. Incorrect format will result in improper versioning.**
+
+### Enforcement with Git Hooks
+
+This project uses **gitlint** with **pre-commit** to enforce Conventional Commits format.
+
+#### Setup (First Time Only)
+
+```bash
+# Install git hooks
+poe setup-hooks
+
+# Or manually
+uv run pre-commit install --hook-type commit-msg
+```
+
+#### How It Works
+
+When you commit, gitlint automatically validates your commit message:
+
+```bash
+# ✅ Valid commit - will succeed
+git commit -m "feat: add user authentication"
+
+# ❌ Invalid commit - will be rejected
+git commit -m "Added new feature"
+# Error: Commit message does not follow Conventional Commits format
+```
+
+#### Validation Commands
+
+```bash
+# Validate last commit message
+poe validate-commit
+
+# Uninstall hooks (if needed)
+poe uninstall-hooks
+```
+
+#### Configuration
+
+- `.pre-commit-config.yaml` - Pre-commit hook configuration
+- `.gitlint` - Gitlint rules and format enforcement
+
 ## Package Management
 
 This project uses **uv** for package management. **DO NOT use pip**.
