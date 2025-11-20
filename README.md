@@ -73,13 +73,12 @@ poe check        # 全チェック実行
 各ツールの詳細な使い方とベストプラクティスは、以下のドキュメントを参照してください：
 
 ### Ruff（コード品質）
-**[docs/RUFF_INTEGRATION.md](docs/RUFF_INTEGRATION.md)**
+**[docs/RUFF.md](docs/RUFF.md)**
 - Ruffの基本的な使い方
 - IDE統合（VSCode、PyCharmなど）
 - コマンドライン実行
 - GitHub Actions 自動フォーマット
 - reviewdog 連携
-- レビューレポート生成
 
 ### mypy（型チェック）
 **[docs/MYPY.md](docs/MYPY.md)**
@@ -231,10 +230,9 @@ poe test              # テスト実行
 poe test-cov          # カバレッジ付き
 poe test-verbose      # 詳細出力
 
-# レビュー
-poe review            # Ruffレビューレポート
-poe review-mypy       # mypyレビューレポート
-poe review-local      # Ruff reviewdog (ローカル)
+# reviewdog（ローカル）
+poe review-local      # Ruff reviewdog
+poe typecheck-review  # mypy reviewdog
 
 # 統合
 poe check             # 全チェック

@@ -312,8 +312,6 @@ fabric.properties
 
 # Ruff
 .ruff_cache/
-RUFF_REVIEW.md
-ruff_report.json
 
 # Test files (開発時のみ使用)
 test_ruff_behavior.py
@@ -330,4 +328,3 @@ coverage.xml
 .mypy_cache/
 .dmypy.json
 dmypy.json
-MYPY_REVIEW.md

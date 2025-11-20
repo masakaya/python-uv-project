@@ -75,14 +75,6 @@ shell = "./.github/scripts/mypy-review.sh"
 # ----------------------------------------
 # レビュー
 # ----------------------------------------
-[tool.poe.tasks.review]
-help = "Generate Ruff review report"
-cmd = "python generate_review_doc.py ."
-
-[tool.poe.tasks.review-mypy]
-help = "Generate mypy review report"
-cmd = "python generate_mypy_review_doc.py ."
-
 [tool.poe.tasks.review-local]
 help = "Run Ruff with reviewdog locally"
 shell = "./.github/scripts/ruff-review.sh"
@@ -111,7 +103,6 @@ shell = """
 rm -rf .ruff_cache .mypy_cache
 rm -rf __pycache__
 rm -rf .pytest_cache
-rm -f RUFF_REVIEW.md MYPY_REVIEW.md ruff_report.json
 find . -type d -name '__pycache__' -exec rm -rf {} + 2>/dev/null || true
 find . -type f -name '*.pyc' -delete 2>/dev/null || true
 echo '🧹 Cleaned!'
