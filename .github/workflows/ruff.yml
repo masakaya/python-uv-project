@@ -37,7 +37,7 @@ jobs:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           uv run ruff check . | \
-          reviewdog -efm="%f:%l:%c: %m" -name="ruff" -reporter=github-pr-review -filter-mode=added -level=warning || true
+          reviewdog -efm="%f:%l:%c: %m" -name="ruff" -reporter=github-pr-review -filter-mode=diff_context -level=warning || true
 
       - name: Run Ruff format and auto-commit
         if: github.event_name == 'pull_request'
