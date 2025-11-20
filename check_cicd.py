@@ -98,3 +98,9 @@ if __name__ == "__main__":
     unused_var = 100  # 未使用変数
     if result == True:  # 不要な比較
         pass
+
+    # mypy 型エラーを強制的に発生させる
+    def new_func() -> int:
+        return "this is a string"  # 型エラー: str を int として返す
+
+    new_func()
