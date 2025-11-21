@@ -59,9 +59,6 @@ jobs:
           # 固定のブランチ名を使用
           BRANCH_NAME="auto-promote-staging-to-production"
 
-          # 既存のリモートブランチを削除（あれば）
-          git push origin --delete "$BRANCH_NAME" 2>/dev/null || true
-
           # マージ用ブランチを作成
           git checkout -b "$BRANCH_NAME" origin/production
 
@@ -83,8 +80,8 @@ jobs:
             git commit -m "chore: merge staging to production"
           fi
 
-          # ブランチをpush
-          git push origin "$BRANCH_NAME"
+          # ブランチをforce push（既存PRを更新）
+          git push -f origin "$BRANCH_NAME"
 
       - name: Create Pull Request to production
         if: steps.check-production.outputs.exists == 'true' && steps.check-pr.outputs.pr_exists == 'false'
