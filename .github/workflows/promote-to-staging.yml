@@ -18,65 +18,19 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check if staging branch exists
-        id: check-staging
-        run: |
-          if git ls-remote --heads origin staging | grep -q staging; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Create staging branch if not exists
-        if: steps.check-staging.outputs.exists == 'false'
-        run: |
-          git checkout -b staging
-          git push origin staging
-
-      - name: Sync staging with main (resolve conflicts)
-        if: steps.check-staging.outputs.exists == 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          git checkout staging
-          git pull origin staging
-
-          # main をマージ試行
-          if ! git merge --no-commit origin/main; then
-            echo "Merge conflicts detected. Resolving automatically..."
-
-            # Auto-resolve ALL conflicts (always use main version)
-            git diff --name-only --diff-filter=U | while read file; do
-              echo "Resolving conflict: $file (using main version)"
-              git checkout --theirs "$file"
-              git add "$file"
-            done
-
-            git commit -m "chore: sync staging with main (auto-resolved conflicts)"
-          else
-            git commit -m "chore: sync staging with main"
-          fi
-
-          git push origin staging
-
       - name: Setup Ruby
-        if: steps.check-staging.outputs.exists == 'true'
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.2"
 
       - name: Install git-pr-release
-        if: steps.check-staging.outputs.exists == 'true'
         run: gem install git-pr-release
 
       - name: Create or update release PR
-        if: steps.check-staging.outputs.exists == 'true'
         env:
           GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIT_PR_RELEASE_BRANCH_PRODUCTION: staging
           GIT_PR_RELEASE_BRANCH_STAGING: main
           GIT_PR_RELEASE_LABELS: promotion
         run: |
-          git fetch origin
-          git-pr-release --squashed --no-fetch || echo "No new changes to release"
+          git-pr-release --squashed --no-fetch
