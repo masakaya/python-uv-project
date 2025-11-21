@@ -23,6 +23,8 @@ Modern Python プロジェクトテンプレート - 高速パッケージマネ
 - ✅ **タスクランナー**: Poe the Poet による統一されたコマンド
 - ✅ **コミットメッセージ強制**: gitlint による Conventional Commits 検証
 - ✅ **自動バージョニング**: release-please による自動リリース管理
+- ✅ **ブランチ自動プロモーション**: main → staging → production の自動PR作成
+- ✅ **コンフリクト自動解決**: プロモーション時のコンフリクトを自動解決
 - ✅ **GitHub Actions 統合**: reviewdog による自動コードレビュー
 - ✅ **自動フォーマット**: PR時に自動的にコード整形＋コミット
 - ✅ **依存関係自動更新**: Renovate による定期的な依存関係更新
@@ -199,68 +201,67 @@ poe check        # 全チェック実行
 
 ## 🤖 GitHub Actions
 
-このテンプレートには4つの自動化ワークフローが含まれています：
+このテンプレートには7つの自動化ワークフローが含まれています：
 
-### 1. Ruff ワークフロー (`.github/workflows/ruff.yml`)
-- **自動実行**: push/PR時
-- **処理内容**:
-  - コード品質チェック（reviewdog）
-  - 自動フォーマット＋コミット
-  - PRへの指摘コメント
+### コード品質ワークフロー
 
-### 2. mypy ワークフロー (`.github/workflows/mypy.yml`)
-- **自動実行**: push/PR時
-- **手動実行**: 可能
-- **処理内容**:
-  - 型チェック（reviewdog）
-  - PRへの型エラー指摘
+| ワークフロー | トリガー | 処理内容 |
+|-------------|---------|---------|
+| **Ruff** | push/PR | コード品質チェック、自動フォーマット＋コミット |
+| **mypy** | push/PR | 型チェック、PRへのエラー指摘 |
+| **Test** | push/PR | テスト実行、カバレッジレポート |
+| **Renovate** | 毎週土曜 3:00 JST | 依存関係の更新PR作成 |
 
-### 3. Test ワークフロー (`.github/workflows/test.yml`)
-- **自動実行**: push/PR時
-- **手動実行**: 可能
-- **処理内容**:
-  - テスト実行
-  - カバレッジレポート
-  - Codecov連携
+### ブランチプロモーションワークフロー
 
-### 4. Renovate ワークフロー (`.github/workflows/renovate.yml`)
-- **自動実行**: 毎週土曜日 3:00 JST
-- **手動実行**: 可能
-- **処理内容**:
-  - 依存関係の更新チェック
-  - 更新PRの自動作成
-  - マイナー・パッチ更新の自動マージ
+| ワークフロー | トリガー | 処理内容 |
+|-------------|---------|---------|
+| **Promote to Staging** | main へのpush | main → staging の自動PR作成（コンフリクト自動解決） |
+| **Promote to Production** | staging へのpush | staging → production の自動PR作成（コンフリクト自動解決） |
+| **Release** | production へのpush | リリースPR作成、GitHub Release、タグ作成（v0.x.x形式） |
 
 ---
 
 ## 💻 開発ワークフロー
 
+### ブランチ戦略
+
+```
+feature/* ─┬─→ main ─→ staging ─→ production
+           │     ↓        ↓           ↓
+           │   開発     ステージング   本番
+           │             検証        リリース
+           │                          ↓
+           │                    Release Please
+           │                          ↓
+           │                   タグ: v0.x.x
+           │                   GitHub Release
+           │                   CHANGELOG更新
+           └─ PR作成
+```
+
 ### 日常的な開発
 
 ```bash
-# 1. コード編集
-#    - VSCodeなら保存時に自動フォーマット
+# 1. feature ブランチを作成
+git checkout -b feat/new-feature main
 
-# 2. コミット前チェック
+# 2. コード編集 & コミット
 poe check  # lint + format + typecheck + test
-
-# 3. 自動修正
-poe fix    # lint-fix + format
-
-# 4. コミット
 git add .
 git commit -m "feat: 新機能追加"
-git push
+
+# 3. main へ PR 作成 & マージ
+git push -u origin feat/new-feature
+gh pr create --base main
 ```
 
-### PR作成時
+### マージ後の自動フロー
 
-1. **PR作成**
-2. **自動実行される処理**:
-   - Ruff が自動的にコードをフォーマット＋コミット
-   - reviewdog が該当行にコメント
-   - テストが自動実行
-3. **レビュー**: 整形済みのコードをレビュー
+1. **main へマージ** → 自動で `main → staging` のPRが作成される
+2. **staging PRをマージ** → 自動で `staging → production` のPRが作成される
+3. **production PRをマージ** → Release Please がリリースPRを作成
+4. **リリースPRをマージ** → タグ（v0.x.x）とGitHub Releaseが自動作成
 
 **注意**: コミットメッセージは [📝 コミットルール](#-コミットルール必読) に従う必要があります。
 
@@ -274,10 +275,15 @@ git push
 │   ├── scripts/          # ワークフロー用スクリプト
 │   │   ├── ruff-review.sh
 │   │   └── mypy-review.sh
-│   └── workflows/        # GitHub Actions
-│       ├── ruff.yml
-│       ├── mypy.yml
-│       └── test.yml
+│   ├── workflows/        # GitHub Actions
+│   │   ├── ruff.yml
+│   │   ├── mypy.yml
+│   │   ├── test.yml
+│   │   ├── promote-to-staging.yml
+│   │   ├── promote-to-production.yml
+│   │   └── release.yml
+│   ├── release-please-config.json
+│   └── .release-please-manifest.json
 ├── docs/                 # ドキュメント
 │   ├── RUFF_INTEGRATION.md
 │   ├── MYPY.md
