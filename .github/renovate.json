@@ -33,6 +33,13 @@
       "matchDepTypes": ["dependencies"],
       "automerge": false,
       "labels": ["dependencies", "production"]
+    },
+    {
+      "description": "GitHub Actions のバージョン更新",
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions",
+      "automerge": true,
+      "labels": ["dependencies", "github-actions"]
     }
   ],
   "schedule": [
