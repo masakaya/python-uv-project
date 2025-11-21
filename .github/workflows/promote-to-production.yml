@@ -63,13 +63,10 @@ jobs:
               exit 1
             fi
 
-            # マージコミット作成
-            git commit -m "chore: merge staging to production with auto-resolved conflicts
-
-Auto-resolved conflicts:
-- .github/.release-please-manifest.json (used staging version)"
+            # Create merge commit with auto-resolved conflicts
+            git commit -m "chore: merge staging to production with auto-resolved conflicts" -m "Auto-resolved conflicts:" -m "- .github/.release-please-manifest.json (used staging version)"
           else
-            # コンフリクトなしの場合も明示的にコミット
+            # Create merge commit without conflicts
             git commit -m "chore: merge staging to production"
           fi
 
