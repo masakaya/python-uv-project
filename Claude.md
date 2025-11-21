@@ -57,6 +57,20 @@ git push origin feature/my-feature
 
 **Always rebase before continuing work on a branch with an open PR.**
 
+## Pull Request Guidelines
+
+When creating a Pull Request, follow the PR template format:
+
+```markdown
+## 概要
+<!-- 変更内容を簡潔に -->
+
+## テスト
+- [ ] ローカルで動作確認済み
+```
+
+**Always fill in the template sections when creating PRs.**
+
 ## Code Quality Standards
 
 This project adheres to strict code quality standards:
