@@ -49,16 +49,22 @@ jobs:
           if ! git merge --no-commit --no-ff origin/staging; then
             echo "Merge conflicts detected. Resolving automatically..."
 
-            # manifest.json のコンフリクトを自動解決（staging側のバージョンを採用）
-            if [ -f .github/.release-please-manifest.json ]; then
-              git checkout --theirs .github/.release-please-manifest.json
-              git add .github/.release-please-manifest.json
-              echo "Resolved .github/.release-please-manifest.json (using staging version)"
-            fi
+            # Auto-resolve known conflicts (always use staging version)
+            for file in \
+              .github/.release-please-manifest.json \
+              .github/workflows/promote-to-production.yml \
+              .github/workflows/promote-to-staging.yml; do
+              if git diff --name-only --diff-filter=U | grep -q "^${file}$"; then
+                git checkout --theirs "$file"
+                git add "$file"
+                echo "Resolved $file (using staging version)"
+              fi
+            done
 
-            # 他のコンフリクトがないか確認
-            if git diff --name-only --diff-filter=U | grep -v ".github/.release-please-manifest.json"; then
-              echo "ERROR: Unexpected conflicts found beyond manifest.json"
+            # Check for any remaining unexpected conflicts
+            if git diff --name-only --diff-filter=U | grep .; then
+              echo "ERROR: Unexpected conflicts found"
+              git diff --name-only --diff-filter=U
               git merge --abort
               exit 1
             fi
