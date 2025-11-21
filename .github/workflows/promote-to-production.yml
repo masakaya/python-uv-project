@@ -18,14 +18,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.2"
-
-      - name: Install git-pr-release
-        run: gem install git-pr-release
-
       - name: Check if production branch exists
         id: check-production
         run: |
@@ -41,6 +33,43 @@ jobs:
           git checkout -b production
           git push origin production
 
+      - name: Sync production with staging (resolve conflicts)
+        if: steps.check-production.outputs.exists == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git checkout production
+          git pull origin production
+
+          # staging をマージ試行
+          if ! git merge --no-commit origin/staging; then
+            echo "Merge conflicts detected. Resolving automatically..."
+
+            # Auto-resolve ALL conflicts (always use staging version)
+            git diff --name-only --diff-filter=U | while read file; do
+              echo "Resolving conflict: $file (using staging version)"
+              git checkout --theirs "$file"
+              git add "$file"
+            done
+
+            git commit -m "chore: sync production with staging (auto-resolved conflicts)"
+          else
+            git commit -m "chore: sync production with staging"
+          fi
+
+          git push origin production
+
+      - name: Setup Ruby
+        if: steps.check-production.outputs.exists == 'true'
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+
+      - name: Install git-pr-release
+        if: steps.check-production.outputs.exists == 'true'
+        run: gem install git-pr-release
+
       - name: Create or update release PR
         if: steps.check-production.outputs.exists == 'true'
         env:
@@ -49,4 +78,5 @@ jobs:
           GIT_PR_RELEASE_BRANCH_STAGING: staging
           GIT_PR_RELEASE_LABELS: promotion
         run: |
-          git-pr-release --squashed --no-fetch
+          git fetch origin
+          git-pr-release --squashed --no-fetch || echo "No new changes to release"
