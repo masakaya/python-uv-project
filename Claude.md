@@ -8,9 +8,21 @@
 - `staging` - Staging environment branch
 - `production` - Production environment branch
 
+### Branch Naming Convention
+
+Branch names should follow Conventional Commits types:
+
+- `feat/` - New features (e.g., `feat/add-user-auth`)
+- `fix/` - Bug fixes (e.g., `fix/login-error`)
+- `chore/` - Maintenance tasks (e.g., `chore/update-deps`)
+- `docs/` - Documentation (e.g., `docs/update-readme`)
+- `refactor/` - Refactoring (e.g., `refactor/simplify-api`)
+- `test/` - Tests (e.g., `test/add-unit-tests`)
+- `ci/` - CI/CD changes (e.g., `ci/add-workflow`)
+
 ### Workflow
 
-1. Create a feature branch from `main`
+1. Create a branch from `main` following the naming convention above
 2. Make changes and commit
 3. Create a Pull Request to `main`
 4. After review and merge to `main`, auto-promotion PRs will be created:
