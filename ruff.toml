@@ -47,7 +47,9 @@ target-version = "py312"
 # B: flake8-bugbear（バグの可能性がある箇所）
 # C4: flake8-comprehensions（リスト内包表記の最適化）
 # SIM: flake8-simplify（コードの簡略化）
-select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM"]
+# S: flake8-bandit（セキュリティチェック）
+# D: pydocstyle（docstringスタイル）
+select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM", "S", "D"]
 
 # 無視するルール（プロジェクトに合わせてカスタマイズ）
 ignore = [
@@ -64,6 +66,7 @@ unfixable = []
 # テストファイルでは特定のルールを無視
 "tests/**/*.py" = [
     "S101",  # assertの使用を許可
+    "D",     # docstringを強制しない
 ]
 # 設定ファイルや初期化ファイルで未使用インポートを許可
 "__init__.py" = ["F401"]
