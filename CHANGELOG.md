@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.3.0](https://github.com/masakaya/python-uv-project/compare/v0.2.1...v0.3.0) (2025-11-21)
+
+
+### Features
+
+* Setup modern Python project template ([#2](https://github.com/masakaya/python-uv-project/issues/2)) ([de98778](https://github.com/masakaya/python-uv-project/commit/de98778cd920bdfdba0d8acfa24213e4976334ba))
+* Setup Renovate for automatic dependency updates ([#3](https://github.com/masakaya/python-uv-project/issues/3)) ([dbfaaf1](https://github.com/masakaya/python-uv-project/commit/dbfaaf1047f0da08d07f37deea2e42a745666689))
+
+
+### Bug Fixes
+
+* change filter-mode to diff_context for reviewdog ([cfced61](https://github.com/masakaya/python-uv-project/commit/cfced619a696bb278480bf73ddd649995305f0e6))
+* **ruff:** add --output-format=concise for reviewdog ([adfd401](https://github.com/masakaya/python-uv-project/commit/adfd401a31b4a1f5c672f02d1141defbbaf8ba0f))
+* **ruff:** use errorformat instead of unsupported -f=ruff ([540913b](https://github.com/masakaya/python-uv-project/commit/540913b5db347435ea02c5960a583db29f482e3e))
+* **ruff:** use github output format for reviewdog ([5dc7c11](https://github.com/masakaya/python-uv-project/commit/5dc7c11f18b5e7cf0d540dfadf4a5f4eea8d6da3))
+
+
+### Miscellaneous
+
+* Promote main to staging ([#10](https://github.com/masakaya/python-uv-project/issues/10)) ([#14](https://github.com/masakaya/python-uv-project/issues/14)) ([7fd29e7](https://github.com/masakaya/python-uv-project/commit/7fd29e753f6a85f975bc2f8c762eb7761211d633))
+* Promote staging to production ([#23](https://github.com/masakaya/python-uv-project/issues/23)) ([a31b0f1](https://github.com/masakaya/python-uv-project/commit/a31b0f18c8b1b7459446137e0b808638ad536f2b))
+* Promote staging to production ([#30](https://github.com/masakaya/python-uv-project/issues/30)) ([d5b2df8](https://github.com/masakaya/python-uv-project/commit/d5b2df8e71d37d01740f93309c1ec05de95a55d4))
+
 ## [0.2.1](https://github.com/masakaya/python-uv-project/compare/python-uv-project-v0.2.0...python-uv-project-v0.2.1) (2025-11-21)
 
 
