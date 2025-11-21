@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.1](https://github.com/masakaya/python-uv-project/compare/python-uv-project-v0.2.0...python-uv-project-v0.2.1) (2025-11-21)
+
+
+### Bug Fixes
+
+* add auto-resolution for workflow file conflicts ([#21](https://github.com/masakaya/python-uv-project/issues/21)) ([d98333d](https://github.com/masakaya/python-uv-project/commit/d98333de8ff0c1f0b832a767b98c874081d3167e))
+* auto-resolve manifest.json conflicts in promotion workflows ([#18](https://github.com/masakaya/python-uv-project/issues/18)) ([80967f0](https://github.com/masakaya/python-uv-project/commit/80967f0bdd395bbf0a86dddc85a5d71a7dc1a4d9))
+* correct YAML syntax in promotion workflow commit messages ([#19](https://github.com/masakaya/python-uv-project/issues/19)) ([4fee4b2](https://github.com/masakaya/python-uv-project/commit/4fee4b20ec25419141b3f60ef1ff5f365fad5eb2))
+
 ## [0.2.0](https://github.com/masakaya/python-uv-project/compare/python-uv-project-v0.1.0...python-uv-project-v0.2.0) (2025-11-20)
 
 
