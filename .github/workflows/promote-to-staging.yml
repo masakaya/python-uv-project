@@ -19,7 +19,13 @@ jobs:
           fetch-depth: 0
 
       - name: Fetch all branches
-        run: git fetch origin
+        run: |
+          git fetch origin
+          echo "=== Remote branches ==="
+          git branch -r
+          echo "=== Check staging ==="
+          git rev-parse --verify origin/staging || echo "staging not found"
+          git rev-parse --verify origin/main || echo "main not found"
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
