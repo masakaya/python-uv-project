@@ -226,19 +226,37 @@ poe check        # 全チェック実行
 
 ### ブランチ戦略
 
+```mermaid
+flowchart LR
+    subgraph Development
+        F[feature/*]
+    end
+
+    subgraph Branches
+        M[main]
+        S[staging]
+        P[production]
+    end
+
+    subgraph Release
+        R[Release Please]
+        T[v0.x.x タグ]
+    end
+
+    F -->|Squash Merge| M
+    M -->|Merge| S
+    S -->|Merge| P
+    P --> R
+    R --> T
 ```
-feature/* ─┬─→ main ─→ staging ─→ production
-           │     ↓        ↓           ↓
-           │   開発     ステージング   本番
-           │             検証        リリース
-           │                          ↓
-           │                    Release Please
-           │                          ↓
-           │                   タグ: v0.x.x
-           │                   GitHub Release
-           │                   CHANGELOG更新
-           └─ PR作成
-```
+
+### マージ種別
+
+| ブランチ間 | マージ方法 | 理由 |
+|-----------|-----------|------|
+| feature → main | **Squash Merge** | 細かいコミットをまとめて履歴をクリーンに |
+| main → staging | **Merge** | 機能単位の履歴を保持（Revert可能） |
+| staging → production | **Merge** | 機能単位の履歴を保持（Revert可能） |
 
 ### 日常的な開発
 
