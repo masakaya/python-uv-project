@@ -34,6 +34,6 @@ jobs:
           GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIT_PR_RELEASE_BRANCH_PRODUCTION: production
           GIT_PR_RELEASE_BRANCH_STAGING: staging
-          GIT_PR_RELEASE_LABELS: promotion
+          GIT_PR_RELEASE_LABELS: production,promotion
         run: |
           git-pr-release --squashed
